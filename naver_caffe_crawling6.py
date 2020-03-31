@@ -111,9 +111,11 @@ view_totalCount = view_items_cnt*10 + 1
 #conn = pymysql.connect(host='192.168.1.25', user = 'db_user', password='db_pw', db = 'mariadb',charset = 'utf8')
 #curs = conn.cursor(pymysql.cursors.DictCursor)
 job_seq = 0
+temp_list = []
 
 while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page를 차지하고 있었습니다. 
     page = page + 1 
+    cnt = 0 
     quest_urls = [] 
     try :
         # add personal conditions 
@@ -131,9 +133,8 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
         quest_list = driver.find_elements_by_css_selector('div.inner_list > a.article') 
         quest_urls = [i.get_attribute('href') for i in quest_list]
         #print(quest_urls)        
-        print('quest_urls: ', len(quest_urls))
+        print('quest_urls: ', len(quest_urls))       
         
-        cnt = 0        
         for quest in quest_urls :
             cnt += 1
             try : #게시글이 삭제되었을 경우가 있기 때문에 try-exception
@@ -164,12 +165,7 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
                 #말머리 추출
                 try :
                     #tag = soup.select('div.tit-box span.head')[0].get_text()
-                    temp_list = [title, content]
-                    f = open('preg_quest.csv', 'w', encoding = 'utf-8', newline='')
-                    wr = csv.writer(f)
-                    wr.writerow(temp_list) 
-                    f.close()                 
-                    #cnt = cnt + 1 
+                    temp_list.append((title, content))                   
                 except : # 말머리 없으면 next 
                     pass                 
                    
@@ -179,11 +175,18 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
                 driver.switch_to_alert.accpet()
                     
     except :
-        pass
-            
+        pass  
+               
+        
     print([page, cnt]) #page로는 진행상황을 알 수 있고 cnt로는 몇개의 데이터를 모았는지 알 수 있음
             
 #conn.close()
+    
+f = open('preg_quest.csv', 'w', encoding = 'utf-8', newline='')
+wr = csv.writer(f)
+wr.writerow(temp_list) 
+f.close() 
+
         
 
 
