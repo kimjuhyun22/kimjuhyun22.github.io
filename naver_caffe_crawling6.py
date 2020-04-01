@@ -96,7 +96,7 @@ driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920')
 
 # base_url = cafe main page url 
 base_url = 'https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920'
-board_id = 14
+board_id = '' # '': 전체글보기, 3: 자유게시판
 #cnt = 0 # number of collected data
 page = 0 # position of current page
 view_items_cnt = 5
@@ -106,7 +106,7 @@ view_totalCount = view_items_cnt*10 + 1
 #conn = pymysql.connect(host='192.168.1.25', user = 'db_user', password='db_pw', db = 'mariadb',charset = 'utf8')
 #curs = conn.cursor(pymysql.cursors.DictCursor)
 job_seq = 0
-temp_list = []
+cdata_list = []
 
 while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page를 차지하고 있었습니다. 
     page = page + 1 
@@ -120,7 +120,11 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
         #https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920
         #&search.menuid=14&userDisplay=10&search.boardtype=L&search.specialmenutype=&search.totalCount=101&search.page=3
         #board_url = base_url + '&search.menuid=14&userDisplay=10&search.boardtype=L&search.specialmenutype=&search.totalCount=101&search.page=2'
-        board_url = base_url + '&search.menuid='+str(board_id) + '&userDisplay='+str(view_items_cnt) + '&search.boardtype=L&search.specialmenutype=&search.totalCount='+str(view_totalCount) + '&search.page='+str(page)     
+        #board_url = base_url + '&search.menuid='+str(board_id) + '&userDisplay='+str(view_items_cnt) + '&search.boardtype=L&search.specialmenutype=' + '&search.totalCount='+str(view_totalCount) + '&search.page='+str(page)     
+      
+        #&userDisplay=10&search.boardtype=L&search.specialmenutype=&search.totalCount=101&search.page=1      
+        board_url = base_url + '&search.menuid='+ str(board_id) + '&userDisplay='+str(view_items_cnt) + '&search.boardtype=L&search.specialmenutype=' + '&search.totalCount='+str(view_totalCount) + '&search.page='+str(page)     
+       
         #print(board_url)
         driver.get(board_url)
         
@@ -128,30 +132,37 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
         quest_list = driver.find_elements_by_css_selector('div.inner_list > a.article') 
         quest_urls = [i.get_attribute('href') for i in quest_list]
         #print(quest_urls)        
-        print('quest_urls: ', len(quest_urls))       
+        #print('page: ', page)
+        #print('quest_urls: ', len(quest_urls))       
         
         for quest in quest_urls :
             cnt += 1
             try : #게시글이 삭제되었을 경우가 있기 때문에 try-exception
                 #print(quest)   
-                driver.get(quest)            
+                driver.get(quest)          
                 driver.switch_to.frame('cafe_main')
                 html = driver.page_source
                 soup = bs(html, 'html.parser')
-               
+
+                #공개 시간
+                #div.tit-box > div.fr > table > tbody > tr > td.m-tcol-c.date
+                time_str = soup.select('div.tit-box > div.fr > table > tbody > tr > td.m-tcol-c.date')[0].get_text()
+                #print(time_str)
+                
                 #제목 추출
-                title = soup.select('div.tit-box span.b')[0].get_text()
-                print(cnt, ': ', title)
+                title_str= soup.select('div.tit-box span.b')[0].get_text()
+                # or title_text = soup.select('div.tit-box > div.fl > table > tbody > tr > td:nth-child(1) > span')[0].get_text()                
+                #print(cnt, ': ', title_str)
                 
                 #내용 추출
-                content_tags = soup.select('#tbody')[0].select('p')
-                content = ' '.join([tags.get_text() for tags in content_tags])                
-                #print(content)                               
+                content_tags_list = soup.select('#tbody')[0].select('p')
+                content_str = ' '.join( [tags.get_text() for tags in content_tags_list] )                
+                #print(content_str)                            
               
                 #말머리 추출
                 try :
-                    #tag = soup.select('div.tit-box span.head')[0].get_text()
-                    temp_list.append([title, content])         
+                    #tag_lit=st = soup.select('div.tit-box span.head')[0].get_text()
+                    cdata_list.append([time_str, title_str, content_str])         
                 except : # 말머리 없으면 next 
                     pass  
                 #temp_list.append((title, content))
@@ -164,39 +175,45 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
     except :
         pass                 
         
-    print([page, cnt]) #page로는 진행상황을 알 수 있고 cnt로는 몇개의 데이터를 모았는지 알 수 있음
+    print('[page, cnt] : ', [page, cnt]) #page로는 진행상황을 알 수 있고 cnt로는 몇개의 데이터를 모았는지 알 수 있음
             
 """ csv file write 1 
 with open('preg_quest.csv', 'w', newline='') as f:
     writer = csv.writer(f)
-    writer.writerows(temp_list)
+    writer.writerows(cdata_list)
 """
 """  csv file write 2-1
 # ndarray 타입인 data를 csv 파일에 쓰기 (한글 사용 불가)
-np.savetxt('preg_quest.csv', tmp_list, fmt='%.1f,%.8f,%d', header='time,vel,alt', comments='')
+np.savetxt('preg_quest.csv', cdata_list, fmt='%.1f,%.8f,%d', header='time,vel,alt', comments='')
 """
-""" csv file write 2-2 """
+""" csv file write 2-2
 with open('preg_quest.csv', 'w', newline='', encoding='utf8') as f:
-    f.write('title, contents\n')
+    f.write('time, title, contents\n')
     writer = csv.writer(f)
-    writer.writerows(temp_list)
-
-""" csv file write 3
-pd.DataFrame(tmp_list)
+    writer.writerows(cdata_list)
 """
+""" csv file write 3 """
+# 크롤링 결과 tmp_list 를 pandas의 DataFrame 형식으로 읽어온다.
+# reference: https://blog.naver.com/kiddwannabe/221274278923
+wdata_df = pd.DataFrame(cdata_list)
+wdata_df.columns = ['time', 'title', 'content']
+print (wdata_df.head(5)) # 상위 5개 행에 대해서 살펴보자 라는 명령
+
+# Unicode Encode Error 가 발생하는 경우
+# 예, \xa0, \xa9 를 없애줌
+# reference: https://blog.naver.com/kiddwannabe/221274285430
+wdata_df = wdata_df.applymap(lambda x: x.replace('\xa0','').replace('\u200b',''))
+wdata_df.to_csv('preg_quest.csv', encoding='cp949') #encoding='cp494' or encoding='euc-kr'
 
 """ csv file read 1
 with open('preg_quest.csv', 'r', encoding='utf8') as f:
     reader = csv.reader(f) # reader: 반복가능 객체 
-    read_dat = [k for k in reader]
-    print(read_data)
+    rdata_list = [k for k in reader]
+    print(rdata_list)
 """
 """ csv file read 2
-read_dat = np.loadtxt('preg_quest.csv', delimiter=',', skiprows=1, dtype=float)
+rdata_list = np.loadtxt('preg_quest.csv', delimiter=',', skiprows=1, dtype=float)
 """
 """ csv file read 3
-read_dat = genfromtxt('preg_quest.csv', skip_header=1, delimiter=',', dtype=float)
+rdata_list = genfromtxt('preg_quest.csv', skip_header=1, delimiter=',', dtype=float)
 """
-
-
-    
