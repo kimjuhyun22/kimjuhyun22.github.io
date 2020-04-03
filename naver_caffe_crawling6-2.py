@@ -77,10 +77,10 @@ from nltk.corpus import stopwords
 
 import matplotlib 
 import matplotlib.pyplot as plt
-from IPython.display import set_matplotlib_formats
+#from IPython.display import set_matplotlib_formats
 
 matplotlib.rc('font', family='Malgun Gothic')
-set_matplotlib_formats('retina')
+#set_matplotlib_formats('retina')
 matplotlib.rc('axes', unicode_minus=False)
 
 #그리고 마스킹을 위해서 라이브러리를 import 하고, 마스킹 이미지도 지정해 줍니다.
@@ -89,13 +89,13 @@ import numpy as np
 import random
 from PIL import Image
 
-r4_mask = np.array(Image.open("./image/twitter.png"))
+#r4_mask = np.array(Image.open("./image/twitter.png"))
 wordcloud = WordCloud(background_color="black",
                font_path='./font/NanumBrush.ttf',
                colormap="prism",
                width=800,
                height=800,
-               mask=r4_mask
+               #mask=r4_mask
 )
 
 wordcloud = wordcloud.generate_from_frequencies(words_dict)
