@@ -17,6 +17,7 @@ import pandas as pd
 """ stadard library modules """
 import time
 import csv
+from tqdm import tqdm
 
 driver = webdriver.Chrome('./chromedriver_win32/chromedriver.exe')
 driver.implicitly_wait(3)
@@ -98,7 +99,7 @@ driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920')
 base_url = 'https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920'
 board_id = '' # '': 전체글보기, 3: 자유게시판
 #cnt = 0 # number of collected data
-page = 0 # position of current page
+page = 100 # position of current page
 view_items_cnt = 5
 view_totalCount = view_items_cnt*10 + 1
 
@@ -108,8 +109,9 @@ view_totalCount = view_items_cnt*10 + 1
 job_seq = 0
 cdata_list = []
 
-while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page를 차지하고 있었습니다. 
-    page = page + 1 
+#while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page를 차지하고 있었습니다. 
+for i in tqdm(range(0, page), mininterval=0.01) :
+    page += 1 
     cnt = 0 
     quest_urls = [] 
     try :
@@ -175,7 +177,7 @@ while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page�
     except :
         pass                 
         
-    print('[page, cnt] : ', [page, cnt]) #page로는 진행상황을 알 수 있고 cnt로는 몇개의 데이터를 모았는지 알 수 있음
+    #print('[page, cnt] : ', [page, cnt]) #page로는 진행상황을 알 수 있고 cnt로는 몇개의 데이터를 모았는지 알 수 있음
             
 """ csv file write 1 
 with open('preg_quest.csv', 'w', newline='') as f:
@@ -202,7 +204,8 @@ print (wdata_df.head(5)) # 상위 5개 행에 대해서 살펴보자 라는 명�
 # Unicode Encode Error 가 발생하는 경우
 # 예, \xa0, \xa9 를 없애줌
 # reference: https://blog.naver.com/kiddwannabe/221274285430
-wdata_df = wdata_df.applymap(lambda x: x.replace('\xa0','').replace('\u200b',''))
+wdata_df = wdata_df.applymap(lambda x: x.replace('\xa0','').replace('\u200b','').replace('\u2219','').replace('\ufeff','') \
+                             .replace('\u2013','').replace('\u2022','').replace('\u2014',''))
 wdata_df.to_csv('preg_quest.csv', encoding='cp949') #encoding='cp494' or encoding='euc-kr'
 
 """ csv file read 1
