@@ -99,7 +99,7 @@ driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920')
 base_url = 'https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920'
 board_id = '' # '': 전체글보기, 3: 자유게시판
 #cnt = 0 # number of collected data
-page = 100 # position of current page
+page = 10 # position of current page
 view_items_cnt = 5
 view_totalCount = view_items_cnt*10 + 1
 
