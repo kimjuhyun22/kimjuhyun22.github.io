@@ -205,7 +205,7 @@ print (wdata_df.head(5)) # 상위 5개 행에 대해서 살펴보자 라는 명�
 # 예, \xa0, \xa9 를 없애줌
 # reference: https://blog.naver.com/kiddwannabe/221274285430
 wdata_df = wdata_df.applymap(lambda x: x.replace('\xa0','').replace('\u200b','').replace('\u2219','').replace('\ufeff','') \
-                             .replace('\u2013','').replace('\u2022','').replace('\u2014',''))
+                             .replace('\u2013','').replace('\u2022','').replace('\u2014','').replace('\u2010',''))
 wdata_df.to_csv('preg_quest.csv', encoding='cp949') #encoding='cp494' or encoding='euc-kr'
 
 """ csv file read 1
