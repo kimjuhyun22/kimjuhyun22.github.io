@@ -9,11 +9,11 @@ Created on Tue Mar 31 11:56:38 2020
 from konlpy.tag import Okt       #Twitter # pip install konlpy
 from collections import Counter
 from tqdm import tqdm
-
+import pandas as pd
 
 file = open("./preg_quest.csv", "r", encoding='cp949')
 readline_list = file.readlines() 
-file.close() 
+file.close()
 
 #읽은 파일을 konlpy Twitter를 통해서 단어 분석을 합니다.
 #이건 명사고, 동사고, 특수문자이고, 외국어이고.. 뭐 그렇게 하나하나 분리해서 분석합니다.
@@ -60,7 +60,6 @@ for i in tqdm(range(0, len(morphs_list)), mininterval=0.01) :
             
 #print(noun_adj_adv_list)
 
-
 #그런 다음, 명사 별로 빈도수를 카운트해서 출력해 봅니다.
 #워드 클라우드의 바로 전 단계입니다.
 count_counter = Counter(noun_adj_adv_list)
@@ -68,13 +67,16 @@ count_counter = Counter(noun_adj_adv_list)
 words_dict = dict(count_counter.most_common())
 #print(words_dict)
 
+words_list = list(zip(words_dict.keys(), words_dict.values()))
+#print(words_list)
+wdata_df = pd.DataFrame(words_list)
+wdata_df.columns = ['word', 'frequency']
+wdata_df.to_csv('./caffe_analysis.csv', encoding='cp949')
 
 #이젠 워드 클라우드를 할 차례가 왔습니다.
 from wordcloud import WordCloud # pip install wordcloud
-
 import nltk                     # conda install nltk
 from nltk.corpus import stopwords
-
 import matplotlib 
 import matplotlib.pyplot as plt
 #from IPython.display import set_matplotlib_formats
