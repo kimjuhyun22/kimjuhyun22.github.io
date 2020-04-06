@@ -58,7 +58,7 @@ Selenium에 내장된 함수만 사용가능하기 때문에 좀더 사용이 �
 # 네이버 로그인 하기
 # 네이버 로그인 페이지를 가져온다.
 my_id = 'jhkim0204'
-my_pw = 'enough8996!'
+my_pw = 'nippong8996!'
 driver.get('https://nid.naver.com/nidlogin.login')
 # 아이디/비밀번호를 입력해준다.
 #wdriver.find_element_by_name('id').send_keys('jhkim0204')
@@ -99,8 +99,8 @@ driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920')
 base_url = 'https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920'
 board_id = '' # '': 전체글보기, 3: 자유게시판
 #cnt = 0 # number of collected data
-page = 10 # position of current page
-view_items_cnt = 5
+page = 2 # position of current page
+view_items_cnt = 10
 view_totalCount = view_items_cnt*10 + 1
 
 # db connect and select
@@ -140,7 +140,7 @@ for i in tqdm(range(0, page), mininterval=0.01) :
         for quest in quest_urls :
             cnt += 1
             try : #게시글이 삭제되었을 경우가 있기 때문에 try-exception
-                #print(quest)   
+                #print(quest)
                 driver.get(quest)          
                 driver.switch_to.frame('cafe_main')
                 html = driver.page_source
@@ -199,7 +199,7 @@ with open('preg_quest.csv', 'w', newline='', encoding='utf8') as f:
 # reference: https://blog.naver.com/kiddwannabe/221274278923
 wdata_df = pd.DataFrame(cdata_list)
 wdata_df.columns = ['time', 'title', 'content']
-print (wdata_df.head(5)) # 상위 5개 행에 대해서 살펴보자 라는 명령
+print (wdata_df.head(14)) # 상위 5개 행에 대해서 살펴보자 라는 명령
 
 # Unicode Encode Error 가 발생하는 경우
 # 예, \xa0, \xa9 를 없애줌

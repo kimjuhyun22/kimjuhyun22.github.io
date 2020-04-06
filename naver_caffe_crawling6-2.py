@@ -67,32 +67,34 @@ count_counter = Counter(noun_adj_adv_list)
 words_dict = dict(count_counter.most_common())
 #print(words_dict)
 
+"""
 words_list = list(zip(words_dict.keys(), words_dict.values()))
 #print(words_list)
 wdata_df = pd.DataFrame(words_list)
 wdata_df.columns = ['word', 'frequency']
 wdata_df.to_csv('./caffe_analysis.csv', encoding='cp949')
+"""
 
 #이젠 워드 클라우드를 할 차례가 왔습니다.
 from wordcloud import WordCloud # pip install wordcloud
-import nltk                     # conda install nltk
-from nltk.corpus import stopwords
-import matplotlib 
+#import nltk                     # conda install nltk
+#from nltk.corpus import stopwords
+#import matplotlib 
 import matplotlib.pyplot as plt
 #from IPython.display import set_matplotlib_formats
 
-matplotlib.rc('font', family='Malgun Gothic')
+#matplotlib.rc('font', family='Malgun Gothic')
 #set_matplotlib_formats('retina')
-matplotlib.rc('axes', unicode_minus=False)
+#matplotlib.rc('axes', unicode_minus=False)
 
 #그리고 마스킹을 위해서 라이브러리를 import 하고, 마스킹 이미지도 지정해 줍니다.
 #주의할 점은 마스킹 이미지는 꼭 하얀 바탕에 검은 그림이어야 잘 된다는 겁니다.
-import numpy as np
-import random
-from PIL import Image
+#import numpy as np
+#import random
+#from PIL import Image
 
 #r4_mask = np.array(Image.open("./image/twitter.png"))
-wordcloud = WordCloud(background_color="black",
+wordcloud = WordCloud(background_color="white",
                font_path='./font/NanumBrush.ttf',
                colormap="prism",
                width=800,
@@ -100,9 +102,9 @@ wordcloud = WordCloud(background_color="black",
                #mask=r4_mask
 )
 
-wordcloud = wordcloud.generate_from_frequencies(words_dict)
+wordcloud_result = wordcloud.generate_from_frequencies(words_dict)
 
-plt.figure(figsize=(12, 12))
-plt.imshow(wordcloud, interpolation="bilinear")
+plt.figure(figsize=(20, 20))
+plt.imshow(wordcloud_result, interpolation="bilinear")
 plt.axis("off")
 plt.show()
