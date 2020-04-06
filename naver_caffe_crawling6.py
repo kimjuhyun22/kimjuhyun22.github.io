@@ -57,8 +57,8 @@ Selenium에 내장된 함수만 사용가능하기 때문에 좀더 사용이 �
 
 # 네이버 로그인 하기
 # 네이버 로그인 페이지를 가져온다.
-my_id = 'jhkim0204'
-my_pw = 'nippong8996!'
+my_id = ''
+my_pw = ''
 driver.get('https://nid.naver.com/nidlogin.login')
 # 아이디/비밀번호를 입력해준다.
 #wdriver.find_element_by_name('id').send_keys('jhkim0204')
