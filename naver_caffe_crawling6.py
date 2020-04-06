@@ -99,7 +99,7 @@ driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920')
 base_url = 'https://cafe.naver.com/ArticleList.nhn?search.clubid=11525920'
 board_id = '' # '': 전체글보기, 3: 자유게시판
 #cnt = 0 # number of collected data
-page = 2 # position of current page
+page_num = 2 # position of current page
 view_items_cnt = 10
 view_totalCount = view_items_cnt*10 + 1
 
@@ -110,7 +110,8 @@ job_seq = 0
 cdata_list = []
 
 #while page < 2 : # 게시글 페이지 수 입니다. 올해글이 약 102page를 차지하고 있었습니다. 
-for i in tqdm(range(0, page), mininterval=0.01) :
+for page in tqdm(range(0, page_num), mininterval=0.01) :
+    page += 1 
     cnt = 0 
     quest_urls = [] 
     try :
@@ -174,9 +175,8 @@ for i in tqdm(range(0, page), mininterval=0.01) :
                 driver.switch_to_alert.accpet()
                     
     except :
-        pass                 
-    
-    page += 1    
+        pass
+
     #print('[page, cnt] : ', [page, cnt]) #page로는 진행상황을 알 수 있고 cnt로는 몇개의 데이터를 모았는지 알 수 있음
             
 """ csv file write 1 
